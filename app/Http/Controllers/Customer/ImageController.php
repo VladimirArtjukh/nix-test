@@ -1,85 +1,97 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @author Artuikh Vladimir
+ * @copyright 2021 Artuikh Vladimir, vladimir.artjukh@gmail.com
+ */
 
 namespace App\Http\Controllers\Customer;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Images\StoreRequest;
+use App\Facades\ImageSaveFacade;
+use App\Models\Image;
+use App\Models\ImageTag;
+use App\Models\Tag;
 
-class ImageController extends Controller
+class ImageController extends CustomerBaseController
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    const FOLDER_FOR_IMAGE = 'images';
+    const SUCCESSFUL_STATUS = 'Image saved successfully';
+
     public function index()
     {
         //
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
      */
     public function create()
     {
-        //
+        $tags = Tag::all(['id', 'name']);
+
+        return view('customer.image.create', compact('tags'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @param  StoreRequest  $request
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
-        //
+        foreach ($request->files as $imageName) {
+            $nameImg = uniqid().'-'.rand().'.jpg'; //name of image
+            //save image to DB
+            $imageId = $this->storeImageToDB(['name' => $nameImg, 'title' => $request->title]);
+            //save file to directive
+            $this->saveImage((int)$imageId, (string)$nameImg, (object)$imageName);
+            //save tags to DB
+            $this->storeTagsToDB((int)$imageId, $request->tags);
+
+        }
+
+        return redirect()->back()->with('status', self::SUCCESSFUL_STATUS);
     }
 
     /**
-     * Display the specified resource.
-     *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  string  $nameImg
+     * @param  object  $imageFile
      */
-    public function show($id)
+    protected function saveImage(int $id, string $nameImg, object $imageFile)
     {
-        //
+        //save image
+        $image_params = [
+            'object'   => self::FOLDER_FOR_IMAGE,
+            'id'       => $id,
+            'name_img' => $nameImg,
+            'file'     => $imageFile
+        ];
+        ImageSaveFacade::saveImage($image_params);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * @param  array  $data
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return integer
      */
-    public function edit($id)
+    protected function storeImageToDB(array $data): int
     {
-        //
+        $result = Image::create($data);
+
+        return (int)$result->id;
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param  int  $imageId
+     * @param  array  $data
      */
-    public function update(Request $request, $id)
+    protected function storeTagsToDB(int $imageId, array $data)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
+        foreach ($data as $tag) {
+            ImageTag::create(['image_id' => $imageId, 'tag_id' => (int)$tag]);
+        }
     }
 }
