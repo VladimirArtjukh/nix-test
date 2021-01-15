@@ -21,6 +21,9 @@
 </head>
 <body>
     <div id="app">
+        <header>
+            @include('includes.navbar')
+        </header>
         <main class="py-4">
             @yield('content')
         </main>
