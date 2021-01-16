@@ -12,7 +12,7 @@
                     <div class="form-group">
                         <label for="title">Title</label>
                         <input type="text" class="form-control" id="title"
-                               placeholder="Title" name="title" required>
+                               placeholder="Title" name="title" value="{{ old('title') }}" required autofocus>
                     </div>
 
 
@@ -27,9 +27,9 @@
 
                     <div class="input-group">
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="images" name="files"
-                                   accept="image/png, image/jpeg">
-                            <label class="custom-file-label" for="images">Choose file</label>
+                            <input type="file" class="custom-file-input" id="files" name="files"
+                                   accept="image/png, image/jpeg" value="{{ old('file') }}">
+                            <label class="custom-file-label" for="files">Choose file</label>
                         </div>
                     </div>
 

@@ -1,4 +1,10 @@
 <?php
+declare(strict_types=1);
+
+/**
+ * @author Artuikh Vladimir
+ * @copyright 2021 Artuikh Vladimir, vladimir.artjukh@gmail.com
+ */
 
 namespace App\Http\Requests\Images;
 
@@ -24,7 +30,7 @@ class IndexRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'tags.*' => 'integer|min:1|exists:tags,id',
         ];
     }
 }

@@ -19,7 +19,7 @@ class ImageController extends CustomerBaseController
 {
     const FOLDER_FOR_IMAGE = 'images';
     const SUCCESSFUL_STATUS = 'Image saved successfully';
-    const PAGINATE = 4;
+    const PAGINATE = 6;
 
     /**
      * @param  IndexRequest  $request
