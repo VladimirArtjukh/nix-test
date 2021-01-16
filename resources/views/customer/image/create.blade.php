@@ -17,7 +17,7 @@
 
 
                     <div class="form-group">
-                        <label for="tag">Tags</label>
+                        <label for="tags">Tags</label>
                         <select class="form-control" id="tags" name="tags[]" multiple>
                             @foreach($tags as $tag)
                                 <option value="{{$tag->id}}">{{$tag->name}}</option>
@@ -28,7 +28,7 @@
                     <div class="input-group">
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="files" name="files"
-                                   accept="image/png, image/jpeg" value="{{ old('file') }}">
+                                   accept="image/png, image/jpeg">
                             <label class="custom-file-label" for="files">Choose file</label>
                         </div>
                     </div>

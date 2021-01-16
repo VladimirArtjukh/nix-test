@@ -30,10 +30,5 @@
         </main>
     </div>
 </body>
-<script>
-    jQuery(document).ready(function($){
-        $('.form-control-chosen').chosen();
-    });
 
-</script>
 </html>
