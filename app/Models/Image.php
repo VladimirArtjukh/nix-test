@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Http\Controllers\Customer\ImageController;
 use App\Services\Model\ModelService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -36,12 +37,59 @@ class Image extends Model
 {
     use HasFactory;
 
+    const EMPTY_IMG = null;
     protected $guarded = [];
     protected $casts
         = [
             'created_at' => 'datetime:Y-m-d H:m:s',
             'updated_at' => 'datetime:Y-m-d H:m:s'
         ];
+
+    protected $appends
+        = [
+            'original_image_size',
+            'little_image_size'
+        ];
+
+    //Path to original image
+    public function getOriginalImageSizeAttribute()
+    {
+        if (isset($this->attributes['name'])) {
+            $result = config('app.url').'/storage/'.ImageController::FOLDER_FOR_IMAGE.'/'.$this->attributes['id'].'/big/'.$this->attributes['name'];
+        } else {
+            $result = self::EMPTY_IMG;
+        }
+
+        return $result;
+    }
+    //Path to original image
+    public function getLittleImageSizeAttribute()
+    {
+        if (isset($this->attributes['name'])) {
+            $result = config('app.url').'/storage/'.ImageController::FOLDER_FOR_IMAGE.'/'.$this->attributes['id'].'/little/'.$this->attributes['name'];
+        } else {
+            $result = self::EMPTY_IMG;
+        }
+
+        return $result;
+    }
+    /**
+     * @param $query
+     * @param  array  $tagsID
+     *
+     * @return mixed
+     */
+    public function scopeFilter($query, array $tagsID)
+    {
+        $query->with('imageTags');
+        if (count($tagsID) > 0) {
+            $query->whereHas('imageTags', function ($query) use ($tagsID) {
+                $query->whereIn('tag_id', $tagsID);
+            });
+        }
+
+        return $query;
+    }
 
 
     /**
@@ -55,10 +103,10 @@ class Image extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * The roles that belong to the user.
      */
     public function imageTags()
     {
-        return $this->hasMany(ImageTag::class);
+        return $this->belongsToMany(Tag::class);
     }
 }

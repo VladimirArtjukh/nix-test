@@ -34,8 +34,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ImageTag extends Model
 {
+
     use HasFactory;
 
+    protected $table = 'image_tag';
     protected $guarded = [];
     protected $casts
         = [

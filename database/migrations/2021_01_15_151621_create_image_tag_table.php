@@ -10,7 +10,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateImageTagsTable extends Migration
+class CreateImageTagTable extends Migration
 {
     /**
      * Run the migrations.
@@ -19,8 +19,8 @@ class CreateImageTagsTable extends Migration
      */
     public function up()
     {
-        if (!Schema::hasTable('image_tags')) {
-            Schema::create('image_tags', function (Blueprint $table) {
+        if (!Schema::hasTable('image_tag')) {
+            Schema::create('image_tag', function (Blueprint $table) {
                 $table->id();
                 $table->unsignedBigInteger('image_id')->comment('Image ID');
                 $table->unsignedBigInteger('tag_id')->comment('Tag ID');
@@ -46,6 +46,6 @@ class CreateImageTagsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('image_tags');
+        Schema::dropIfExists('image_tag');
     }
 }

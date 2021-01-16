@@ -59,14 +59,14 @@ class Images implements ImageInterface
      */
     public function fit(array $imageParams, array $setting)
     {
-        $object    = $imageParams['object'];
-        $id        = $imageParams['id'];
-        $nameImg   = $imageParams['name_img'];
-        $file      = $imageParams['file'];
-        $folder    = $setting['folder'];
-        $width     = $setting['width'];
-        $height    = $setting['height'];
-        $quality   = $setting['quality'];
+        $object  = $imageParams['object'];
+        $id      = $imageParams['id'];
+        $nameImg = $imageParams['name_img'];
+        $file    = $imageParams['file'];
+        $folder  = $setting['folder'];
+        $width   = $setting['width'];
+        $height  = $setting['height'];
+        $quality = $setting['quality'];
 
         //Create folder
         if (!is_dir(public_path().'/storage/'.$object.'/'.$id.'/'.$folder)) {
@@ -76,13 +76,16 @@ class Images implements ImageInterface
         $pathImgFull = public_path().'/storage/'.$object.'/'.$id.'/'.$folder.'/'
             .$nameImg;
         if ($file != "") {
+
             try {
                 //edit image
                 $img = Image::make($file);
-                $img->resize($width, $height, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
-                $img->resizeCanvas($width, $height);
+                if ($width != '' || $height != '') {
+                    $img->resize($width, $height, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                    $img->resizeCanvas($width, $height);
+                }
                 $img->save($pathImgFull, $quality);
 
                 return $img;

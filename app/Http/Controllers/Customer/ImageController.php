@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Customer;
 
+use App\Http\Requests\Images\IndexRequest;
 use App\Http\Requests\Images\StoreRequest;
 use App\Facades\ImageSaveFacade;
 use App\Models\Image;
@@ -18,10 +19,19 @@ class ImageController extends CustomerBaseController
 {
     const FOLDER_FOR_IMAGE = 'images';
     const SUCCESSFUL_STATUS = 'Image saved successfully';
+    const PAGINATE = 4;
 
-    public function index()
+    /**
+     * @param  IndexRequest  $request
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
+     */
+    public function index(IndexRequest $request)
     {
-        //
+        $tagsFilter = ($request->has('tags')) ? $request->tags : [];
+        $images     = Image::filter($tagsFilter)->paginate(self::PAGINATE);
+        $tags       = Tag::all(['id', 'name']);
+        return view('customer.image.index', compact('images', 'tagsFilter', 'tags'));
     }
 
     /**
@@ -49,7 +59,6 @@ class ImageController extends CustomerBaseController
             $this->saveImage((int)$imageId, (string)$nameImg, (object)$imageName);
             //save tags to DB
             $this->storeTagsToDB((int)$imageId, $request->tags);
-
         }
 
         return redirect()->back()->with('status', self::SUCCESSFUL_STATUS);

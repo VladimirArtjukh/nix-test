@@ -21,8 +21,14 @@ class Settings
             ImageController::FOLDER_FOR_IMAGE => [
                 [
                     'folder'  => 'big',
-                    'width'   => '1460',
-                    'height'  => '500',
+                    'width'   => null,
+                    'height'  => null,
+                    'quality' => '100'
+                ],
+                [
+                    'folder'  => 'little',
+                    'width'   => null,
+                    'height'  => 200,
                     'quality' => '100'
                 ]
             ]
